@@ -8,5 +8,11 @@
 
 此处增添一个if else逻辑，如果开启了CP，则使用ringattn_context_parallel计算注意力输出，否则依然使用torch_npu.npu_fusion_attention。
 ## 入参部分
+ringattn_context_parallel需要的入参有(q, k, v, head_num, cp_para, scale, attention_mask, self.dropout_p)
+
+torch_npu.npu_fusion_attention原有的入参为(q, k, v, head_num=self.num_attention_heads_per_partition_per_cp, atten_mask=mask, input_layout="SBH", scale=1 / math.sqrt(self.head_dim))
+
+对比来看，q k v head_num scale attention_mask均为已有，dropout_p在初始化的时候已经指定，只需要注意qkv的输入维度即可。cp_para需要添加，这一部分为ring attention的一些相关参数构建，是一个字典，包括['causal', 'cp_group', 'cp_size', 'rank', 'cp_global_ranks', 'cp_group_for_send_recv_overlap', 'pse', 'pse_type', 'cp_inner_ranks', 'cp_outer_ranks', 'cp_dkv_outer_ranks', 'cp_group_for_intra_window', 'cp_group_for_intra_window_send_recv_overlap', 'scheduling_info']
 ## 内部实现
+根据mindspeed core，ringattn_context_parallel方法通过调用AttentionWithCp类实现。
 ## 输出转换
