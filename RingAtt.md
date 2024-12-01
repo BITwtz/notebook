@@ -14,5 +14,19 @@ torch_npu.npu_fusion_attention原有的入参为(q, k, v, head_num=self.num_atte
 
 对比来看，q k v head_num scale attention_mask均为已有，dropout_p在初始化的时候已经指定，只需要注意qkv的输入维度即可。cp_para需要添加，这一部分为ring attention的一些相关参数构建，是一个字典，包括['causal', 'cp_group', 'cp_size', 'rank', 'cp_global_ranks', 'cp_group_for_send_recv_overlap', 'pse', 'pse_type', 'cp_inner_ranks', 'cp_outer_ranks', 'cp_dkv_outer_ranks', 'cp_group_for_intra_window', 'cp_group_for_intra_window_send_recv_overlap', 'scheduling_info']
 ## 内部实现
-根据mindspeed core，ringattn_context_parallel方法通过调用AttentionWithCp类实现。
+根据mindspeed core，ringattn_context_parallel方法通过调用AttentionWithCp类实现。内含forward、backward、compute_mask方法。这些方法的实现过程中引入了RingP2P，需要添加这个类的实现。引入了causal_forward_fetch、flash_attention_with_alibi_pse等方法，需要添加这些方法的实现。这些实现绝大多数可参考mindspeed core中的ring_context_parallel.py和utils.py。
 ## 输出转换
+
+
+
+
+
+
+
+
+
+
+
+
+
+
