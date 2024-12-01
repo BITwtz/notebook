@@ -16,7 +16,7 @@ torch_npu.npu_fusion_attention原有的入参为(q, k, v, head_num=self.num_atte
 ## 内部实现
 根据mindspeed core，ringattn_context_parallel方法通过调用AttentionWithCp类实现。内含forward、backward、compute_mask方法。这些方法的实现过程中引入了RingP2P，需要添加这个类的实现。引入了causal_forward_fetch、flash_attention_with_alibi_pse等方法，需要添加这些方法的实现。这些实现绝大多数可参考mindspeed core中的ring_context_parallel.py和utils.py。
 ## 输出转换
-
+验证输出维度是否一致，如不一致进行维度变换
 
 
 
